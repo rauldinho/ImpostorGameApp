@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Impostor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #F0F0F0;
+      --fg:     #121212;
+      --red:    #D02020;
+      --blue:   #1040C0;
+      --yellow: #F0C020;
+      --muted:  #E0E0E0;
+      --white:  #FFFFFF;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 1.75rem 1rem 3rem;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .view { display: none; flex-direction: column; flex: 1; }
+    .view.active { display: flex; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white);
+      border: 3px solid var(--fg);
+      padding: 1.25rem;
+      box-shadow: 6px 6px 0px 0px var(--fg);
+    }
+    .card + .card { margin-top: 0.75rem; }
+
+    /* ── Typography ── */
+    .app-title {
+      font-size: clamp(2.8rem, 16vw, 4.8rem);
+      font-weight: 900;
+      letter-spacing: -2px;
+      text-transform: uppercase;
+      color: var(--fg);
+      line-height: 1;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .app-sub {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--fg);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      opacity: 0.5;
+      text-align: center;
+      margin-top: 0.4rem;
+    }
+    /* ── Home header (centered) ── */
+    .home-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .spy-logo {
+      width: 72px;
+      height: 72px;
+      background: var(--fg);
+      border: 3px solid var(--fg);
+      box-shadow: 5px 5px 0px 0px var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.9rem;
+      flex-shrink: 0;
+    }
+    .home-color-bar {
+      display: flex;
+      height: 8px;
+      width: 100%;
+      border: 2px solid var(--fg);
+      margin-bottom: 0.5rem;
+    }
+    .home-color-bar div { flex: 1; }
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--fg);
+      margin-bottom: 0.75rem;
+      opacity: 0.55;
+    }
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.3px;
+      color: var(--fg);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+      padding: 0.85rem 1.5rem;
+      border: 3px solid var(--fg);
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 0.88rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+      width: 100%;
+      min-height: 52px;
+      border-radius: 0;
+    }
+    .btn:active:not(:disabled) {
+      transform: translate(4px, 4px) !important;
+      box-shadow: none !important;
+    }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .btn-primary {
+      background: var(--red);
+      color: var(--white);
+      box-shadow: 5px 5px 0px 0px var(--fg);
+    }
+    .btn-primary:hover:not(:disabled) { background: #B81A1A; }
+
+    .btn-secondary {
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: 5px 5px 0px 0px var(--fg);
+    }
+    .btn-secondary:hover:not(:disabled) { background: #0D35A0; }
+
+    .btn-yellow {
+      background: var(--yellow);
+      color: var(--fg);
+      box-shadow: 5px 5px 0px 0px var(--fg);
+    }
+    .btn-yellow:hover:not(:disabled) { background: #D8AC10; }
+
+    .btn-danger {
+      background: var(--fg);
+      color: var(--white);
+      box-shadow: 5px 5px 0px 0px var(--red);
+    }
+    .btn-danger:hover:not(:disabled) { background: #2a2a2a; }
+
+    .btn-ghost {
+      background: var(--white);
+      color: var(--fg);
+      box-shadow: 3px 3px 0px 0px var(--fg);
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--muted); }
+
+    .btn-success {
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: 5px 5px 0px 0px var(--fg);
+    }
+    .btn-success:hover:not(:disabled) { background: #0D35A0; }
+
+    .btn-sm { padding: 0.5rem 1rem; font-size: 0.78rem; min-height: 40px; }
+    .btn-row { display: flex; gap: 0.5rem; }
+    .btn-row .btn { flex: 1; }
+
+    /* ── Inputs ── */
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--white);
+      border: 3px solid var(--fg);
+      color: var(--fg);
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-weight: 500;
+      outline: none;
+      border-radius: 0;
+      transition: box-shadow 0.15s ease-out;
+    }
+    input[type="text"]:focus, textarea:focus {
+      box-shadow: 4px 4px 0px 0px var(--blue);
+    }
+    input[type="text"]::placeholder, textarea::placeholder { color: #999; font-weight: 400; }
+
+    label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--fg);
+      margin-bottom: 0.5rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 1rem; }
+    .field { display: flex; flex-direction: column; }
+
+    /* ── Error / notice ── */
+    .error-msg {
+      color: var(--red);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #FFF0F0;
+      border: 3px solid var(--red);
+      padding: 0.65rem 0.9rem;
+      display: none;
+      box-shadow: 3px 3px 0px 0px var(--red);
+    }
+    .error-msg.show { display: block; }
+    .notice {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--fg);
+      text-align: center;
+      padding: 0.5rem;
+      opacity: 0.55;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-top: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 3px solid var(--fg);
+    }
+
+    /* ── Room code ── */
+    .room-code-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--yellow);
+      border: 3px solid var(--fg);
+      padding: 0.9rem 1.1rem;
+      box-shadow: 6px 6px 0px 0px var(--fg);
+    }
+    .room-code-label {
+      font-size: 0.6rem;
+      color: var(--fg);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+    .room-code-value {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      color: var(--fg);
+      font-variant-numeric: tabular-nums;
+      flex: 1;
+    }
+    .copy-btn {
+      background: var(--fg);
+      border: 2px solid var(--fg);
+      color: var(--yellow);
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.45rem 0.85rem;
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s;
+      white-space: nowrap;
+      border-radius: 0;
+      box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.4);
+    }
+    .copy-btn:hover { background: #333; }
+    .copy-btn:active { transform: translate(2px,2px); box-shadow: none; }
+    .copy-btn.copied { background: var(--fg); color: var(--yellow); }
+
+    /* ── Player list ── */
+    .player-list { display: flex; flex-direction: column; gap: 0.45rem; }
+    .player-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.6rem 0.8rem;
+      border: 2px solid var(--fg);
+      background: var(--white);
+    }
+    .player-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; font-weight: 900;
+      color: var(--white); flex-shrink: 0;
+      border: 2px solid var(--fg);
+    }
+    .player-name { flex: 1; font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+    .badge {
+      font-size: 0.58rem;
+      font-weight: 900;
+      padding: 0.2rem 0.55rem;
+      border: 2px solid var(--fg);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .badge-host     { background: var(--yellow); color: var(--fg); }
+    .badge-you      { background: var(--blue);   color: var(--white); }
+    .badge-impostor { background: var(--red);    color: var(--white); }
+
+    /* ── Settings chips ── */
+    .chip-group { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .chip {
+      padding: 0.4rem 0.9rem;
+      border: 2px solid var(--fg);
+      background: var(--white);
+      color: var(--fg);
+      font-size: 0.73rem;
+      font-weight: 700;
+      font-family: 'Outfit', system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+      user-select: none;
+      border-radius: 0;
+      box-shadow: 2px 2px 0px 0px var(--fg);
+    }
+    .chip:hover:not(.disabled)  { background: var(--muted); }
+    .chip:active:not(.disabled) { transform: translate(2px,2px); box-shadow: none; }
+    .chip.active  { background: var(--blue); color: var(--white); box-shadow: 3px 3px 0px 0px var(--fg); }
+    .chip.disabled { cursor: default; opacity: 0.4; pointer-events: none; }
+
+    /* ── Impostor count ── */
+    .count-group { display: flex; gap: 0.5rem; }
+    .count-btn {
+      width: 50px; height: 50px;
+      border: 2px solid var(--fg);
+      background: var(--white);
+      color: var(--fg);
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 0;
+      box-shadow: 3px 3px 0px 0px var(--fg);
+    }
+    .count-btn:hover  { background: var(--muted); }
+    .count-btn:active { transform: translate(2px,2px); box-shadow: none; }
+    .count-btn.active { background: var(--red); color: var(--white); border-color: var(--fg); }
+
+    /* ── Word reveal flip card ── */
+    .reveal-card { perspective: 1000px; cursor: pointer; margin: 1rem 0; }
+    .reveal-card-inner {
+      position: relative;
+      min-height: 190px;
+      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
+      transform-style: preserve-3d;
+    }
+    .reveal-card.flipped .reveal-card-inner { transform: rotateY(180deg); }
+    .reveal-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1.5rem;
+      border: 3px solid var(--fg);
+    }
+    .reveal-front {
+      background: var(--muted);
+      border-style: dashed;
+    }
+    .reveal-back {
+      background: var(--blue);
+      transform: rotateY(180deg);
+      box-shadow: 6px 6px 0px 0px var(--fg);
+    }
+    .reveal-hint { color: var(--fg); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; }
+    .reveal-word {
+      font-size: clamp(1.8rem, 8vw, 2.6rem);
+      font-weight: 900;
+      color: var(--white);
+      text-align: center;
+      word-break: break-word;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+    .reveal-category { color: var(--yellow); font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; }
+
+    /* ── Impostor screen ── */
+    .impostor-screen {
+      background: var(--red);
+      border: 3px solid var(--fg);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      box-shadow: 8px 8px 0px 0px var(--fg);
+    }
+    .impostor-emoji { font-size: 3.5rem; display: block; margin-bottom: 0.75rem; animation: wobble 3s ease-in-out infinite; }
+    @keyframes wobble { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+    .impostor-title {
+      font-size: 1.7rem; font-weight: 900;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+    .impostor-tip { color: rgba(255,255,255,0.85); font-size: 0.9rem; line-height: 1.6; font-weight: 500; }
+    .impostor-cat { color: var(--yellow); font-size: 0.82rem; margin-top: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; }
+    .impostor-hint-box {
+      margin-top: 1rem;
+      background: rgba(0,0,0,0.22);
+      border: 2px solid rgba(255,255,255,0.35);
+      padding: 0.85rem 1rem;
+    }
+    .impostor-hint-label { font-size: 0.62rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.14em; color: var(--yellow); }
+    .impostor-hint-word  { font-size: 1.6rem; font-weight: 900; color: var(--white); margin-top: 0.25rem; text-transform: uppercase; }
+    .impostor-hint-desc  { font-size: 0.72rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem; line-height: 1.4; }
+
+    /* ── Voting ── */
+    .vote-progress {
+      background: var(--yellow);
+      border: 3px solid var(--fg);
+      padding: 0.7rem 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      box-shadow: 4px 4px 0px 0px var(--fg);
+    }
+    .vote-progress .count { font-weight: 900; color: var(--fg); font-size: 1.1rem; }
+    .vote-grid { display: flex; flex-direction: column; gap: 0.5rem; margin: 0.75rem 0; }
+    .vote-target {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      border: 3px solid var(--fg);
+      background: var(--white);
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+      box-shadow: 4px 4px 0px 0px var(--fg);
+    }
+    .vote-target:hover:not(.disabled):not(.voted) {
+      background: var(--muted);
+      transform: translateY(-2px);
+      box-shadow: 4px 6px 0px 0px var(--fg);
+    }
+    .vote-target:active:not(.disabled):not(.voted) { transform: translate(3px,3px); box-shadow: none; }
+    .vote-target.voted   { border-color: var(--blue); background: #EEF2FF; cursor: default; box-shadow: none; }
+    .vote-target.disabled { cursor: default; opacity: 0.45; }
+    .vote-target .vt-name { font-weight: 700; flex: 1; text-transform: uppercase; letter-spacing: 0.04em; }
+    .vote-check { color: var(--blue); font-size: 1.2rem; font-weight: 900; }
+    .voted-banner {
+      text-align: center; padding: 0.85rem;
+      background: var(--blue);
+      border: 3px solid var(--fg);
+      color: var(--white); font-weight: 900;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em;
+      display: none;
+      box-shadow: 4px 4px 0px 0px var(--fg);
+    }
+    .voted-banner.show { display: block; }
+
+    /* ── Final guess ── */
+    .final-guess-impostor {
+      background: var(--red);
+      border: 3px solid var(--fg);
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      box-shadow: 8px 8px 0px 0px var(--fg);
+    }
+    .final-guess-waiting {
+      background: var(--blue);
+      border: 3px solid var(--fg);
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      box-shadow: 8px 8px 0px 0px var(--fg);
+    }
+    .countdown-ring-wrap {
+      display: flex; align-items: center; justify-content: center;
+      margin: 1.25rem auto;
+      position: relative; width: 100px; height: 100px;
+    }
+    .countdown-ring-wrap svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: rgba(0,0,0,0.15); stroke-width: 6; }
+    .ring-fg { fill: none; stroke-width: 6; stroke-linecap: butt; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+    .countdown-number { position: relative; font-size: 2rem; font-weight: 900; color: var(--white); z-index: 1; }
+
+    /* ── Results ── */
+    .result-banner {
+      text-align: center; padding: 1.5rem;
+      border: 3px solid var(--fg);
+      margin-bottom: 0.75rem;
+      box-shadow: 8px 8px 0px 0px var(--fg);
+    }
+    .result-banner.players-win  { background: var(--blue); }
+    .result-banner.impostors-win { background: var(--red); }
+    .result-emoji { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+    .result-title { font-size: 1.8rem; font-weight: 900; color: var(--white); text-transform: uppercase; letter-spacing: -0.5px; }
+    .result-sub   { font-size: 0.88rem; margin-top: 0.3rem; color: rgba(255,255,255,0.8); font-weight: 600; }
+    .word-reveal-result {
+      text-align: center;
+      background: var(--yellow);
+      border: 3px solid var(--fg);
+      padding: 1rem;
+      box-shadow: 5px 5px 0px 0px var(--fg);
+    }
+    .word-reveal-label { font-size: 0.65rem; color: var(--fg); text-transform: uppercase; font-weight: 900; letter-spacing: 0.14em; opacity: 0.65; }
+    .word-reveal-value { font-size: 2.2rem; font-weight: 900; color: var(--fg); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: -0.5px; }
+    .word-cat { font-size: 0.78rem; color: var(--fg); margin-top: 0.2rem; font-weight: 700; opacity: 0.65; text-transform: uppercase; letter-spacing: 0.06em; }
+    .vote-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .vote-table th { text-align: left; padding: 0.5rem 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.65rem; border-bottom: 3px solid var(--fg); }
+    .vote-table td { padding: 0.5rem 0.6rem; border-bottom: 2px solid var(--muted); font-weight: 600; }
+    .vote-table tr:last-child td { border-bottom: none; }
+    .vote-table .skip-vote { color: #888; font-style: italic; }
+
+    /* ── Settings guest notice ── */
+    .settings-guest-notice {
+      background: var(--muted);
+      border: 3px solid var(--fg);
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+
+    /* ── Misc ── */
+    .spacer { flex: 1; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 0.75rem; }
+    .mt-3 { margin-top: 1rem; }
+    .mt-4 { margin-top: 1.5rem; }
+    .divider { border: none; border-top: 3px solid var(--fg); margin: 1rem 0; }
+    .center { text-align: center; }
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .fade-in { animation: fadeIn 0.28s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--fg); }
+
+    /* ── QR Modal ── */
+    #qr-modal.open {
+      display: flex !important;
+      animation: fadeIn 0.2s ease-out;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ═══════════════════════════════════
+       VIEW: HOME
+  ═══════════════════════════════════════ -->
+  <div id="view-home" class="view active fade-in">
+
+    <!-- Header centrado -->
+    <div class="home-header">
+      <!-- Logo espía -->
+      <div class="spy-logo">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:70%;height:70%;">
+          <rect x="6" y="28" width="52" height="7" fill="#F0C020"/>
+          <rect x="16" y="8" width="32" height="22" fill="#F0C020"/>
+          <rect x="16" y="22" width="32" height="5" fill="#1040C0"/>
+          <ellipse cx="32" cy="42" rx="13" ry="11" fill="#F0C020"/>
+          <rect x="22" y="51" width="20" height="8" fill="#F0C020"/>
+          <rect x="13" y="38" width="13" height="8" fill="#121212"/>
+          <rect x="38" y="38" width="13" height="8" fill="#121212"/>
+          <rect x="26" y="41" width="12" height="2" fill="#F0C020"/>
+          <rect x="14" y="39" width="3" height="2" fill="rgba(255,255,255,0.3)"/>
+          <rect x="39" y="39" width="3" height="2" fill="rgba(255,255,255,0.3)"/>
+          <rect x="27" y="47" width="10" height="2" fill="#D02020"/>
+        </svg>
+      </div>
+      <!-- Barra de colores + título (mismo ancho) -->
+      <div style="width:100%;">
+        <div class="home-color-bar">
+          <div style="background:var(--red);"></div>
+          <div style="background:var(--blue);"></div>
+          <div style="background:var(--yellow);"></div>
+        </div>
+        <div class="app-title">IMPOSTOR</div>
+      </div>
+      <div class="app-sub">Multijugador para todos</div>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <div class="field">
+          <label for="home-name">Tu nombre</label>
+          <input id="home-name" type="text" placeholder="Escribe tu nombre…" maxlength="20" autocomplete="off" />
+        </div>
+        <div id="home-error" class="error-msg"></div>
+        <button id="btn-create" class="btn btn-primary">Crear partida</button>
+        <div id="join-section" style="display:none;" class="field">
+          <label for="home-code">Código de sala</label>
+          <input id="home-code" type="text" placeholder="Código de 6 caracteres…" maxlength="6"
+                 autocomplete="off" style="text-transform:uppercase;letter-spacing:0.15em;font-weight:700;" />
+        </div>
+        <div class="btn-row">
+          <button id="btn-join-toggle" class="btn btn-secondary">Unirse</button>
+          <button id="btn-join-confirm" class="btn btn-yellow" style="display:none;">Entrar →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="card mt-3" style="border-left:6px solid var(--blue);">
+      <div class="section-label">Cómo jugar · Impostor</div>
+      <p style="font-size:0.88rem;color:var(--fg);line-height:1.7;font-weight:500;">
+        Todos reciben una <strong>palabra secreta</strong> — excepto los impostores,
+        que reciben una <strong style="color:var(--red)">pista</strong> de la misma categoría.
+        Por turnos, digan una pista. Tras la discusión,
+        <strong>voten</strong> a quien crean que es el impostor.
+        Si es atrapado, ¡tiene una última oportunidad para adivinar la palabra!
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       VIEW: LOBBY
+  ═══════════════════════════════════════ -->
+  <div id="view-lobby" class="view fade-in">
+    <div class="topbar">
+      <h2>Sala de Espera</h2>
+      <button id="btn-leave-lobby" class="btn btn-ghost btn-sm">Salir</button>
+    </div>
+
+    <div class="room-code-wrap">
+      <div>
+        <div class="room-code-label">Código de Sala</div>
+        <div class="room-code-value" id="lobby-code">——</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;">
+        <button class="copy-btn" id="btn-copy-code">Copiar</button>
+        <button class="copy-btn" id="btn-show-qr" style="display:none;background:var(--blue);color:var(--white);border-color:var(--blue);">QR</button>
+      </div>
+    </div>
+
+    <div class="card mt-2">
+      <div class="section-label">Jugadores (<span id="lobby-player-count">0</span>)</div>
+      <div class="player-list" id="lobby-players"></div>
+    </div>
+
+    <!-- Host-only: Game Settings -->
+    <div class="card mt-2" id="lobby-settings">
+      <div class="section-label">Configuración</div>
+      <div class="field">
+        <label>Categoría</label>
+        <div class="chip-group" id="settings-category">
+          <div class="chip active" data-cat="food">Comida</div>
+          <div class="chip" data-cat="animals">Animales</div>
+          <div class="chip" data-cat="movies">Películas</div>
+          <div class="chip" data-cat="sports">Deportes</div>
+          <div class="chip" data-cat="places">Lugares</div>
+          <div class="chip" data-cat="professions">Profesiones</div>
+          <div class="chip" data-cat="custom">Personalizado</div>
+        </div>
+      </div>
+      <div class="field mt-2" id="custom-words-field" style="display:none;">
+        <label for="custom-words-input">Palabras personalizadas <span style="font-weight:400;opacity:0.55">(separadas por coma, mín. 2)</span></label>
+        <textarea id="custom-words-input" rows="2" placeholder="manzana, cohete, guitarra…"></textarea>
+      </div>
+      <div class="field mt-2">
+        <label>Número de impostores</label>
+        <div class="count-group">
+          <button class="count-btn active" data-count="1">1</button>
+          <button class="count-btn" data-count="2">2</button>
+          <button class="count-btn" data-count="3">3</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guest: Settings hidden -->
+    <div class="settings-guest-notice mt-2" id="lobby-settings-guest" style="display:none;">
+      <div class="section-label" style="margin-bottom:0.5rem;">Configuración</div>
+      <p class="pulse" style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.6;">El anfitrión está configurando la partida…</p>
+    </div>
+
+    <div id="lobby-error" class="error-msg mt-2"></div>
+    <button id="btn-start-game" class="btn btn-primary mt-3" style="display:none;">Iniciar Partida</button>
+    <p id="lobby-waiting" class="notice mt-3 pulse" style="display:none;">
+      Esperando que el anfitrión inicie…
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       VIEW: WORD REVEAL
+  ═══════════════════════════════════════ -->
+  <div id="view-word-reveal" class="view fade-in">
+    <div class="topbar">
+      <h2>Tu Rol</h2>
+      <span id="reveal-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
+    </div>
+
+    <!-- Non-impostor -->
+    <div id="normal-reveal" style="display:none;">
+      <p style="color:var(--fg);font-size:0.82rem;margin-bottom:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;opacity:0.6;">
+        Toca la carta para ver tu palabra secreta — ¡que nadie más la vea!
+      </p>
+      <div class="reveal-card" id="flip-card">
+        <div class="reveal-card-inner">
+          <div class="reveal-face reveal-front">
+            <span style="font-size:2.5rem;">🃏</span>
+            <span class="reveal-hint">Toca para revelar</span>
+          </div>
+          <div class="reveal-face reveal-back">
+            <span class="reveal-category" id="reveal-category-normal"></span>
+            <span class="reveal-word" id="reveal-word"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Impostor -->
+    <div id="impostor-reveal" class="impostor-screen" style="display:none;">
+      <span class="impostor-emoji">😈</span>
+      <div class="impostor-title">Eres el Impostor</div>
+      <p class="impostor-tip">Escucha con atención e intenta pasar desapercibido.<br>¡Que no te atrapen!</p>
+      <p class="impostor-cat">Categoría: <strong id="reveal-category-impostor"></strong></p>
+      <div class="impostor-hint-box">
+        <div class="impostor-hint-label">Tu palabra pista</div>
+        <div class="impostor-hint-word" id="reveal-hint-word"></div>
+        <div class="impostor-hint-desc">De la misma categoría — úsala para disimular, pero NO es la palabra secreta</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div id="reveal-host-controls" style="display:none;">
+      <p class="notice" style="margin-bottom:0.75rem;">Espera a que todos vean su rol y luego empieza.</p>
+      <button id="btn-start-round" class="btn btn-primary">¡Todos listos — Empezar!</button>
+    </div>
+    <p id="reveal-guest-wait" class="notice pulse" style="display:none;">
+      Mira tu rol y espera al anfitrión…
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       VIEW: GAME (discussion)
+  ═══════════════════════════════════════ -->
+  <div id="view-game" class="view fade-in">
+    <div class="topbar">
+      <h2>Discusión</h2>
+      <span id="game-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
+    </div>
+
+    <div id="game-personal-reminder" class="card" style="text-align:center;">
+      <div id="game-reminder-content"></div>
+    </div>
+
+    <div class="card mt-2">
+      <div class="section-label">Jugadores</div>
+      <div class="player-list" id="game-players"></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <p style="color:var(--fg);font-size:0.82rem;text-align:center;margin:1rem 0;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;opacity:0.55;">
+      Por turnos, den una pista sobre el tema secreto.<br>
+      ¡Encuentren al impostor!
+    </p>
+
+    <button id="btn-start-voting" class="btn btn-primary" style="display:none;">Iniciar Votación</button>
+    <p id="game-guest-wait" class="notice pulse" style="display:none;">
+      Esperando que el anfitrión inicie la votación…
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       VIEW: VOTING
+  ═══════════════════════════════════════ -->
+  <div id="view-voting" class="view fade-in">
+    <div class="topbar">
+      <h2>Votación</h2>
+      <span id="voting-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
+    </div>
+
+    <p style="color:var(--fg);font-size:0.88rem;margin-bottom:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;opacity:0.65;">
+      ¿Quién crees que es el impostor?
+    </p>
+
+    <div class="vote-progress">
+      <span>Votos emitidos</span>
+      <span class="count"><span id="vote-count">0</span> / <span id="vote-total">0</span></span>
+    </div>
+
+    <div class="voted-banner" id="voted-banner">
+      ✓ Voto enviado — esperando a los demás…
+    </div>
+
+    <div class="vote-grid" id="vote-grid"></div>
+
+    <button id="btn-skip-vote" class="btn btn-ghost mt-2" style="display:none;">
+      Saltar — No estoy seguro
+    </button>
+
+    <div class="mt-3" id="vote-host-controls" style="display:none;">
+      <hr class="divider">
+      <button id="btn-force-reveal" class="btn btn-danger btn-sm">Revelar Resultados Ya</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       VIEW: FINAL GUESS
+  ═══════════════════════════════════════ -->
+  <div id="view-final-guess" class="view fade-in">
+    <div class="topbar">
+      <h2>Última Oportunidad</h2>
+      <span id="final-guess-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
+    </div>
+
+    <!-- Impostor panel -->
+    <div id="final-guess-impostor-panel" style="display:none;">
+      <div class="final-guess-impostor">
+        <span style="font-size:3rem;display:block;margin-bottom:0.5rem;">🎯</span>
+        <div style="font-size:1.4rem;font-weight:900;color:var(--white);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:-0.3px;">¡Te Atraparon!</div>
+        <p style="color:rgba(255,255,255,0.85);font-size:0.9rem;line-height:1.5;margin-bottom:0.25rem;font-weight:500;">
+          Adivina la palabra secreta para ganar igual.<br>
+          Categoría: <strong id="fg-category" style="color:var(--yellow);"></strong>
+        </p>
+        <p style="font-size:0.8rem;color:rgba(255,255,255,0.7);">
+          Tu pista era: <strong id="fg-hint" style="color:var(--yellow);"></strong>
+        </p>
+      </div>
+      <div class="countdown-ring-wrap mt-3">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="44"/>
+          <circle class="ring-fg" id="fg-ring" cx="50" cy="50" r="44"
+            stroke-dasharray="276.46" stroke-dashoffset="0" stroke="#D02020"/>
+        </svg>
+        <span class="countdown-number" id="fg-countdown">30</span>
+      </div>
+      <div class="card mt-2">
+        <div class="field">
+          <label for="fg-input">Tu respuesta</label>
+          <input id="fg-input" type="text" placeholder="Escribe la palabra secreta…" maxlength="40" autocomplete="off" />
+        </div>
+        <button id="btn-submit-guess" class="btn btn-success mt-2">Enviar Respuesta</button>
+      </div>
+    </div>
+
+    <!-- Waiting panel -->
+    <div id="final-guess-waiting-panel" style="display:none;">
+      <div class="final-guess-waiting">
+        <span style="font-size:3rem;display:block;margin-bottom:0.5rem;">🧠</span>
+        <div style="font-size:1.3rem;font-weight:900;color:var(--white);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:-0.3px;">
+          ¡Atraparon a <span id="fg-impostor-name">el impostor</span>!
+        </div>
+        <p style="color:rgba(255,255,255,0.8);font-size:0.9rem;line-height:1.5;font-weight:500;">
+          Tiene 30 segundos para adivinar la palabra secreta.<br>
+          ¡Si acierta, gana de todas formas!
+        </p>
+      </div>
+      <div class="countdown-ring-wrap mt-3">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="44"/>
+          <circle class="ring-fg" id="fg-ring-wait" cx="50" cy="50" r="44"
+            stroke-dasharray="276.46" stroke-dashoffset="0" stroke="#F0C020"/>
+        </svg>
+        <span class="countdown-number" id="fg-countdown-wait">30</span>
+      </div>
+      <p class="notice pulse mt-2">Esperando su respuesta…</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       VIEW: RESULTS
+  ═══════════════════════════════════════ -->
+  <div id="view-results" class="view fade-in">
+    <div class="topbar">
+      <h2>Resultados</h2>
+      <span id="results-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
+    </div>
+
+    <div id="result-banner" class="result-banner"></div>
+
+    <div class="word-reveal-result mt-2">
+      <div class="word-reveal-label">La palabra secreta era</div>
+      <div class="word-reveal-value" id="result-word"></div>
+      <div class="word-cat" id="result-category"></div>
+    </div>
+
+    <div class="card mt-2">
+      <div class="section-label">Los Impostores</div>
+      <div id="result-impostors" class="player-list"></div>
+    </div>
+
+    <div class="card mt-2">
+      <div class="section-label">Desglose de votos</div>
+      <table class="vote-table" id="result-votes"></table>
+    </div>
+
+    <div class="spacer"></div>
+
+    <button id="btn-play-again" class="btn btn-primary mt-3" style="display:none;">Jugar de Nuevo</button>
+    <p id="results-guest-wait" class="notice pulse mt-2" style="display:none;">
+      Esperando que el anfitrión inicie una nueva partida…
+    </p>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ── QR Modal (fuera del container, posición fixed) ── -->
+<div id="qr-modal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(18,18,18,0.85);display:none;align-items:center;justify-content:center;padding:1rem;">
+  <div id="qr-box" style="background:var(--white);border:4px solid var(--fg);box-shadow:10px 10px 0px 0px var(--fg);max-width:320px;width:100%;position:relative;">
+    <!-- Header -->
+    <div style="background:var(--blue);border-bottom:3px solid var(--fg);padding:0.85rem 1rem;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:var(--white);">Escanear para unirse</span>
+      <button id="btn-close-qr" style="background:var(--yellow);border:2px solid var(--fg);width:28px;height:28px;font-size:1rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:0;font-family:inherit;flex-shrink:0;">✕</button>
+    </div>
+    <!-- QR code area -->
+    <div style="padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem;">
+      <!-- Color bar mini -->
+      <div style="display:flex;width:100%;height:6px;border:2px solid var(--fg);margin-bottom:0.25rem;">
+        <div style="flex:1;background:var(--red);"></div>
+        <div style="flex:1;background:var(--blue);"></div>
+        <div style="flex:1;background:var(--yellow);"></div>
+      </div>
+      <div id="qr-code-canvas" style="border:3px solid var(--fg);padding:8px;box-shadow:4px 4px 0 0 var(--fg);"></div>
+      <div style="text-align:center;">
+        <div style="font-size:0.6rem;font-weight:900;text-transform:uppercase;letter-spacing:0.15em;opacity:0.5;margin-bottom:0.25rem;">Código de sala</div>
+        <div id="qr-code-label" style="font-size:1.8rem;font-weight:900;letter-spacing:0.25em;color:var(--fg);"></div>
+      </div>
+      <p style="font-size:0.75rem;font-weight:600;text-align:center;opacity:0.55;text-transform:uppercase;letter-spacing:0.06em;line-height:1.5;">
+        Apunta la cámara al código QR<br>para unirte directamente
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let myId       = null;
+let myName     = null;
+let myRoomCode = null;
+let amHost     = false;
+let personal   = null;   // { isImpostor, word, hint, category }
+let roomState  = null;
+let hasVoted   = false;
+let countdownInterval = null;
+
+// ── Avatars ───────────────────────────────────────────────────────────────────
+const COLOURS     = ['#D02020','#1040C0','#121212','#D02020','#1040C0','#121212','#D02020','#1040C0','#121212','#D02020'];
+const avatarColor = id => COLOURS[(id.charCodeAt(0) + id.charCodeAt(id.length-1)) % COLOURS.length];
+const initials    = name => name.slice(0,2).toUpperCase();
+
+// ── View management ───────────────────────────────────────────────────────────
+function showView(id) {
+  if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active', 'fade-in');
+  el.addEventListener('animationend', () => el.classList.remove('fade-in'), { once: true });
+  window.scrollTo(0, 0);
+}
+
+// ── Countdown ring ────────────────────────────────────────────────────────────
+const RING_CIRC = 276.46;
+
+function startCountdown(seconds, numElId, ringElId) {
+  if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+  const numEl  = document.getElementById(numElId);
+  const ringEl = document.getElementById(ringElId);
+  if (!numEl || !ringEl) return;
+
+  let remaining = seconds;
+  function tick() {
+    numEl.textContent = remaining;
+    const pct = remaining / seconds;
+    ringEl.style.strokeDashoffset = RING_CIRC * (1 - pct);
+    ringEl.style.stroke = remaining > 20 ? '#22c55e' : remaining > 10 ? '#F0C020' : '#D02020';
+    if (remaining <= 0) { clearInterval(countdownInterval); countdownInterval = null; }
+    remaining--;
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+// ── Socket ────────────────────────────────────────────────────────────────────
+const socket = io({ autoConnect: true });
+
+socket.on('connect', () => { myId = socket.id; });
+socket.on('disconnect', () => { console.warn('[Socket] Disconnected'); });
+
+socket.on('room-updated', (room) => {
+  roomState  = room;
+  myRoomCode = room.code;
+  if (room.owner === myId && !amHost) amHost = true;
+
+  const active = document.querySelector('.view.active')?.id;
+  if (room.phase === 'lobby' && active && active !== 'view-lobby' && active !== 'view-home') {
+    showView('view-lobby');
+  }
+  if (active === 'view-lobby') renderLobby(room);
+  if (active === 'view-game')  renderGamePlayers(room.players);
+});
+
+socket.on('game-started', (data) => {
+  personal = data;
+  hasVoted = false;
+  closeQrModal();
+  showView('view-word-reveal');
+  renderWordReveal(data);
+});
+
+socket.on('round-started', (data) => {
+  showView('view-game');
+  renderGame(data.players);
+});
+
+socket.on('voting-started', (data) => {
+  hasVoted = false;
+  showView('view-voting');
+  renderVoting(data.players);
+});
+
+socket.on('vote-updated', ({ count, total }) => {
+  document.getElementById('vote-count').textContent = count;
+  document.getElementById('vote-total').textContent = total;
+});
+
+socket.on('final-guess', ({ category, hint }) => {
+  showView('view-final-guess');
+  document.getElementById('final-guess-room-code').textContent = myRoomCode ?? '';
+  document.getElementById('final-guess-impostor-panel').style.display = '';
+  document.getElementById('final-guess-waiting-panel').style.display  = 'none';
+  document.getElementById('fg-category').textContent = formatCategory(category);
+  document.getElementById('fg-hint').textContent     = hint ?? '';
+  document.getElementById('fg-input').value          = '';
+  document.getElementById('btn-submit-guess').disabled    = false;
+  document.getElementById('btn-submit-guess').textContent = 'Enviar Respuesta';
+  startCountdown(30, 'fg-countdown', 'fg-ring');
+});
+
+socket.on('awaiting-final-guess', ({ impostorName }) => {
+  showView('view-final-guess');
+  document.getElementById('final-guess-room-code').textContent = myRoomCode ?? '';
+  document.getElementById('final-guess-impostor-panel').style.display = 'none';
+  document.getElementById('final-guess-waiting-panel').style.display  = '';
+  document.getElementById('fg-impostor-name').textContent = impostorName;
+  startCountdown(30, 'fg-countdown-wait', 'fg-ring-wait');
+});
+
+socket.on('results', (data) => {
+  showView('view-results');
+  renderResults(data);
+});
+
+socket.on('you-are-host', () => {
+  amHost = true;
+  const active = document.querySelector('.view.active');
+  if (roomState) {
+    if (active?.id === 'view-lobby')   renderLobby(roomState);
+    if (active?.id === 'view-game')    refreshHostControls();
+    if (active?.id === 'view-voting')  refreshVoteHostControls();
+    if (active?.id === 'view-results') refreshResultsHostControls();
+  }
+});
+
+socket.on('error', (msg) => showError('lobby-error', msg));
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+const homeNameInput  = document.getElementById('home-name');
+const homeCodeInput  = document.getElementById('home-code');
+const joinSection    = document.getElementById('join-section');
+const btnCreate      = document.getElementById('btn-create');
+const btnJoinToggle  = document.getElementById('btn-join-toggle');
+const btnJoinConfirm = document.getElementById('btn-join-confirm');
+
+let joinMode = false;
+
+btnJoinToggle.addEventListener('click', () => {
+  joinMode = !joinMode;
+  joinSection.style.display    = joinMode ? '' : 'none';
+  btnJoinConfirm.style.display = joinMode ? '' : 'none';
+  btnJoinToggle.textContent    = joinMode ? 'Cancelar' : 'Unirse';
+  if (joinMode) homeCodeInput.focus(); else homeCodeInput.value = '';
+  hideError('home-error');
+});
+
+btnCreate.addEventListener('click', () => {
+  const name = homeNameInput.value.trim();
+  if (!name) { showError('home-error', 'Escribe tu nombre primero'); return; }
+  btnCreate.disabled    = true;
+  btnCreate.textContent = 'Creando…';
+  socket.emit('create-room', { name }, (res) => {
+    btnCreate.disabled    = false;
+    btnCreate.textContent = 'Crear partida';
+    if (res.ok) {
+      myName = name; myRoomCode = res.code; amHost = true;
+      showView('view-lobby');
+    } else { showError('home-error', res.error); }
+  });
+});
+
+btnJoinConfirm.addEventListener('click', doJoin);
+homeCodeInput.addEventListener('keydown', e => { if (e.key === 'Enter') doJoin(); });
+homeNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') btnCreate.click(); });
+
+function doJoin() {
+  const name = homeNameInput.value.trim();
+  const code = homeCodeInput.value.trim().toUpperCase();
+  if (!name) { showError('home-error', 'Escribe tu nombre'); return; }
+  if (!code) { showError('home-error', 'Escribe el código de sala'); return; }
+  btnJoinConfirm.disabled    = true;
+  btnJoinConfirm.textContent = 'Entrando…';
+  socket.emit('join-room', { name, code }, (res) => {
+    btnJoinConfirm.disabled    = false;
+    btnJoinConfirm.textContent = 'Entrar →';
+    if (res.ok) {
+      myName = name; myRoomCode = code; amHost = false;
+      showView('view-lobby');
+    } else { showError('home-error', res.error); }
+  });
+}
+
+// ── LOBBY ─────────────────────────────────────────────────────────────────────
+document.getElementById('btn-leave-lobby').addEventListener('click', () => {
+  closeQrModal();
+  resetState();
+  showView('view-home');
+});
+
+document.getElementById('btn-copy-code').addEventListener('click', () => {
+  if (!myRoomCode) return;
+  navigator.clipboard.writeText(myRoomCode).then(() => {
+    const btn = document.getElementById('btn-copy-code');
+    btn.textContent = '✓ ¡Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+});
+
+// ── QR MODAL ─────────────────────────────────────────────────────────────────
+let qrInstance = null;
+
+document.getElementById('btn-show-qr').addEventListener('click', () => {
+  if (!myRoomCode) return;
+  const modal    = document.getElementById('qr-modal');
+  const canvas   = document.getElementById('qr-code-canvas');
+  const label    = document.getElementById('qr-code-label');
+
+  // URL que se codifica en el QR — abre la app con el código prellenado
+  const joinUrl = `${window.location.origin}/?join=${myRoomCode}`;
+  label.textContent = myRoomCode;
+
+  // Limpiar QR anterior
+  canvas.innerHTML = '';
+  qrInstance = new QRCode(canvas, {
+    text:          joinUrl,
+    width:         200,
+    height:        200,
+    colorDark:     '#121212',
+    colorLight:    '#FFFFFF',
+    correctLevel:  QRCode.CorrectLevel.M,
+  });
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+
+document.getElementById('btn-close-qr').addEventListener('click', closeQrModal);
+document.getElementById('qr-modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('qr-modal')) closeQrModal();
+});
+
+function closeQrModal() {
+  const m = document.getElementById('qr-modal');
+  if (m) m.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── URL params: auto-rellenar código si viene ?join=CODE ─────────────────────
+(function handleJoinParam() {
+  const params = new URLSearchParams(window.location.search);
+  const code   = params.get('join');
+  if (!code) return;
+  // Limpiar URL sin recargar
+  history.replaceState(null, '', window.location.pathname);
+  // Abrir sección de unirse con el código prellenado
+  joinMode = true;
+  joinSection.style.display    = '';
+  btnJoinConfirm.style.display = '';
+  btnJoinToggle.textContent    = 'Cancelar';
+  homeCodeInput.value          = code.toUpperCase();
+  // Enfocar el campo de nombre para que el usuario escriba
+  setTimeout(() => homeNameInput.focus(), 100);
+})();
+
+document.getElementById('settings-category').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip || !amHost) return;
+  document.querySelectorAll('#settings-category .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  const cat = chip.dataset.cat;
+  document.getElementById('custom-words-field').style.display = cat === 'custom' ? '' : 'none';
+  socket.emit('update-settings', { category: cat });
+});
+
+document.querySelectorAll('.count-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!amHost) return;
+    document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    socket.emit('update-settings', { impostorCount: Number(btn.dataset.count) });
+  });
+});
+
+let customWordsTimer;
+document.getElementById('custom-words-input').addEventListener('input', (e) => {
+  clearTimeout(customWordsTimer);
+  customWordsTimer = setTimeout(() => {
+    const words = e.target.value.split(',').map(w => w.trim()).filter(Boolean);
+    socket.emit('update-settings', { customWords: words });
+  }, 600);
+});
+
+document.getElementById('btn-start-game').addEventListener('click', () => {
+  hideError('lobby-error');
+  socket.emit('start-game');
+});
+
+function renderLobby(room) {
+  document.getElementById('lobby-code').textContent            = room.code;
+  document.getElementById('reveal-room-code').textContent      = room.code;
+  document.getElementById('game-room-code').textContent        = room.code;
+  document.getElementById('voting-room-code').textContent      = room.code;
+  document.getElementById('results-room-code').textContent     = room.code;
+  document.getElementById('final-guess-room-code').textContent = room.code;
+  document.getElementById('lobby-player-count').textContent    = room.players.length;
+
+  const list = document.getElementById('lobby-players');
+  list.innerHTML = '';
+  room.players.forEach(p => list.appendChild(makePlayerItem(p, room.owner)));
+
+  const isHost = amHost && room.owner === myId;
+
+  // Botón QR: solo visible para el host
+  document.getElementById('btn-show-qr').style.display = isHost ? '' : 'none';
+
+  // Settings: host sees controls, guests see "host is configuring" notice
+  document.getElementById('lobby-settings').style.display       = isHost ? '' : 'none';
+  document.getElementById('lobby-settings-guest').style.display = isHost ? 'none' : '';
+
+  if (isHost) {
+    document.querySelectorAll('#settings-category .chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.cat === room.settings.category);
+    });
+    document.getElementById('custom-words-field').style.display =
+      room.settings.category === 'custom' ? '' : 'none';
+    document.querySelectorAll('.count-btn').forEach(b => {
+      b.classList.toggle('active', Number(b.dataset.count) === room.settings.impostorCount);
+    });
+  }
+
+  document.getElementById('btn-start-game').style.display = isHost ? '' : 'none';
+  document.getElementById('lobby-waiting').style.display   = isHost ? 'none' : '';
+
+  const canStart = room.players.length >= 3;
+  document.getElementById('btn-start-game').disabled    = !canStart;
+  document.getElementById('btn-start-game').textContent = canStart
+    ? 'Iniciar Partida'
+    : `Faltan ${3 - room.players.length} jugador(es)`;
+}
+
+// ── WORD REVEAL ───────────────────────────────────────────────────────────────
+document.getElementById('flip-card').addEventListener('click', () => {
+  document.getElementById('flip-card').classList.add('flipped');
+});
+
+document.getElementById('btn-start-round').addEventListener('click', () => {
+  socket.emit('start-round');
+});
+
+function renderWordReveal(data) {
+  if (data.isImpostor) {
+    document.getElementById('normal-reveal').style.display   = 'none';
+    document.getElementById('impostor-reveal').style.display = '';
+    document.getElementById('reveal-category-impostor').textContent = formatCategory(data.category);
+    document.getElementById('reveal-hint-word').textContent         = data.hint ?? '?';
+  } else {
+    document.getElementById('normal-reveal').style.display   = '';
+    document.getElementById('impostor-reveal').style.display = 'none';
+    document.getElementById('flip-card').classList.remove('flipped');
+    document.getElementById('reveal-word').textContent           = data.word;
+    document.getElementById('reveal-category-normal').textContent = formatCategory(data.category);
+  }
+  document.getElementById('reveal-host-controls').style.display = amHost ? '' : 'none';
+  document.getElementById('reveal-guest-wait').style.display     = amHost ? 'none' : '';
+}
+
+// ── GAME (discussion) ─────────────────────────────────────────────────────────
+document.getElementById('btn-start-voting').addEventListener('click', () => {
+  socket.emit('start-voting');
+});
+
+function renderGame(players) {
+  renderGamePlayers(players);
+  refreshHostControls();
+
+  const rem = document.getElementById('game-reminder-content');
+  if (personal?.isImpostor) {
+    rem.innerHTML = `
+      <span style="font-size:1.5rem;">😈</span>
+      <p style="color:var(--red);font-weight:900;margin-top:0.3rem;text-transform:uppercase;letter-spacing:0.04em;">Eres el Impostor</p>
+      <p style="color:var(--fg);font-size:0.78rem;margin-top:0.15rem;font-weight:700;opacity:0.6;text-transform:uppercase;letter-spacing:0.08em;">Categoría: ${formatCategory(personal.category)}</p>
+      <div style="margin-top:0.65rem;background:var(--red);border:3px solid var(--fg);padding:0.6rem 0.9rem;display:inline-block;box-shadow:3px 3px 0 0 var(--fg);">
+        <span style="font-size:0.58rem;font-weight:900;text-transform:uppercase;letter-spacing:0.14em;color:var(--yellow);">Tu palabra pista</span>
+        <div style="font-size:1.3rem;font-weight:900;color:var(--white);margin-top:0.1rem;text-transform:uppercase;">${escHtml(personal.hint ?? '?')}</div>
+      </div>`;
+  } else {
+    rem.innerHTML = `
+      <p style="color:var(--fg);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;font-weight:900;opacity:0.55;">Tu palabra</p>
+      <p style="font-size:1.7rem;font-weight:900;color:var(--fg);margin-top:0.2rem;text-transform:uppercase;letter-spacing:-0.5px;">${escHtml(personal?.word ?? '?')}</p>
+      <p style="color:var(--fg);font-size:0.78rem;font-weight:700;opacity:0.6;text-transform:uppercase;letter-spacing:0.07em;margin-top:0.15rem;">Categoría: ${formatCategory(personal?.category)}</p>`;
+  }
+}
+
+function renderGamePlayers(players) {
+  const list = document.getElementById('game-players');
+  list.innerHTML = '';
+  players.forEach(p => list.appendChild(makePlayerItem(p, roomState?.owner)));
+}
+
+function refreshHostControls() {
+  document.getElementById('btn-start-voting').style.display = amHost ? '' : 'none';
+  document.getElementById('game-guest-wait').style.display  = amHost ? 'none' : '';
+}
+
+// ── VOTING ────────────────────────────────────────────────────────────────────
+document.getElementById('btn-skip-vote').addEventListener('click', () => submitVote('skip'));
+document.getElementById('btn-force-reveal').addEventListener('click', () => {
+  socket.emit('reveal-results');
+});
+
+function renderVoting(players) {
+  hasVoted = false;
+  document.getElementById('voted-banner').classList.remove('show');
+  document.getElementById('vote-count').textContent = '0';
+  document.getElementById('vote-total').textContent = players.length;
+  refreshVoteHostControls();
+
+  const grid = document.getElementById('vote-grid');
+  grid.innerHTML = '';
+  players.forEach(p => {
+    if (p.id === myId) return;
+    const btn = document.createElement('div');
+    btn.className  = 'vote-target';
+    btn.dataset.id = p.id;
+
+    const av = document.createElement('div');
+    av.className        = 'player-avatar';
+    av.style.background = avatarColor(p.id);
+    av.textContent      = initials(p.name);
+
+    const info = document.createElement('div');
+    info.style.flex = '1';
+    info.innerHTML  = `<div class="vt-name">${escHtml(p.name)}</div>`;
+
+    btn.append(av, info);
+    btn.addEventListener('click', () => submitVote(p.id));
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('btn-skip-vote').style.display = '';
+}
+
+function submitVote(targetId) {
+  if (hasVoted) return;
+  hasVoted = true;
+  document.querySelectorAll('.vote-target').forEach(el => {
+    el.classList.add('disabled');
+    if (el.dataset.id === targetId) {
+      el.classList.add('voted');
+      el.insertAdjacentHTML('beforeend', '<span class="vote-check">✓</span>');
+    }
+  });
+  document.getElementById('btn-skip-vote').style.display = 'none';
+  document.getElementById('voted-banner').classList.add('show');
+  socket.emit('submit-vote', { targetId });
+}
+
+function refreshVoteHostControls() {
+  document.getElementById('vote-host-controls').style.display = amHost ? '' : 'none';
+}
+
+// ── FINAL GUESS ───────────────────────────────────────────────────────────────
+document.getElementById('btn-submit-guess').addEventListener('click', () => {
+  const word = document.getElementById('fg-input').value.trim();
+  if (!word) return;
+  document.getElementById('btn-submit-guess').disabled    = true;
+  document.getElementById('btn-submit-guess').textContent = 'Enviando…';
+  socket.emit('submit-final-guess', { word });
+});
+
+document.getElementById('fg-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-submit-guess').click();
+});
+
+// ── RESULTS ───────────────────────────────────────────────────────────────────
+document.getElementById('btn-play-again').addEventListener('click', () => {
+  socket.emit('new-game');
+});
+
+function renderResults(data) {
+  const banner = document.getElementById('result-banner');
+
+  if (!data.impostorsWin) {
+    banner.className = 'result-banner players-win';
+    banner.innerHTML = `<span class="result-emoji">🎉</span>
+      <div class="result-title">¡Ganan los Jugadores!</div>
+      <div class="result-sub">${
+        data.impostorGuessedCorrectly === false
+          ? '¡El impostor fue atrapado y no adivinó la palabra!'
+          : '¡El impostor fue descubierto!'
+      }</div>`;
+  } else if (data.impostorGuessedCorrectly === true) {
+    banner.className = 'result-banner impostors-win';
+    banner.innerHTML = `<span class="result-emoji">🧠</span>
+      <div class="result-title">¡Gana el Impostor!</div>
+      <div class="result-sub">¡Atrapado pero adivinó la palabra secreta!</div>`;
+  } else {
+    banner.className = 'result-banner impostors-win';
+    banner.innerHTML = `<span class="result-emoji">😈</span>
+      <div class="result-title">¡Ganan los Impostores!</div>
+      <div class="result-sub">Engañaron a todos.</div>`;
+  }
+
+  document.getElementById('result-word').textContent     = data.word;
+  document.getElementById('result-category').textContent = `Categoría: ${formatCategory(data.category)}`;
+
+  const impList = document.getElementById('result-impostors');
+  impList.innerHTML = '';
+  data.impostors.forEach(({ id, name }) => {
+    const item = document.createElement('div');
+    item.className = 'player-item';
+    item.innerHTML = `<span style="font-size:1.2rem;">😈</span>
+      <span class="player-name" style="color:var(--red);">${escHtml(name)}</span>
+      <span class="badge badge-impostor">IMPOSTOR</span>`;
+    impList.appendChild(item);
+  });
+
+  if (data.eliminated) {
+    const isImpostor = data.impostors.some(imp => imp.id === data.eliminated.id);
+    const elEl = document.createElement('div');
+    elEl.className = 'player-item mt-2';
+    elEl.style.cssText = 'border-top:3px solid var(--fg);padding-top:0.6rem;';
+    elEl.innerHTML = `<span style="font-size:1rem;">${isImpostor ? '🎯' : '❌'}</span>
+      <span class="player-name" style="font-size:0.82rem;font-weight:600;text-transform:none;">
+        Most voted: <strong>${escHtml(data.eliminated.name)}</strong>
+        ${isImpostor ? '— ¡eliminado correctamente!' : '— NO era el impostor'}
+      </span>`;
+    impList.appendChild(elEl);
+  }
+
+  const table = document.getElementById('result-votes');
+  table.innerHTML = `<thead><tr><th>Jugador</th><th>Votó por</th></tr></thead>`;
+  const tbody = document.createElement('tbody');
+  for (const [voter, target] of Object.entries(data.voteMap ?? {})) {
+    const tr = document.createElement('tr');
+    const isSkip = target === 'Skip';
+    tr.innerHTML = `<td>${escHtml(voter)}</td>
+      <td class="${isSkip ? 'skip-vote' : ''}">${isSkip ? '— saltó' : escHtml(target)}</td>`;
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+
+  refreshResultsHostControls();
+}
+
+function refreshResultsHostControls() {
+  document.getElementById('btn-play-again').style.display     = amHost ? '' : 'none';
+  document.getElementById('results-guest-wait').style.display = amHost ? 'none' : '';
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function makePlayerItem(player, ownerId) {
+  const item = document.createElement('div');
+  item.className = 'player-item';
+
+  const av = document.createElement('div');
+  av.className        = 'player-avatar';
+  av.style.background = avatarColor(player.id);
+  av.textContent      = initials(player.name);
+
+  const name = document.createElement('span');
+  name.className  = 'player-name';
+  name.textContent = player.name;
+
+  item.append(av, name);
+
+  if (player.id === ownerId) {
+    const b = document.createElement('span');
+    b.className  = 'badge badge-host';
+    b.textContent = 'Anfitrión';
+    item.appendChild(b);
+  }
+  if (player.id === myId) {
+    const b = document.createElement('span');
+    b.className  = 'badge badge-you';
+    b.textContent = 'Tú';
+    item.appendChild(b);
+  }
+  return item;
+}
+
+function formatCategory(cat) {
+  if (!cat) return '';
+  const map = {
+    food:'Comida', animals:'Animales', movies:'Películas',
+    sports:'Deportes', places:'Lugares', professions:'Profesiones', custom:'Personalizado',
+  };
+  return map[cat] ?? cat;
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function hideError(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('show');
+}
+
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function resetState() {
+  myRoomCode = null;
+  amHost     = false;
+  personal   = null;
+  roomState  = null;
+  hasVoted   = false;
+  joinMode   = false;
+  joinSection.style.display    = 'none';
+  btnJoinConfirm.style.display = 'none';
+  btnJoinToggle.textContent    = 'Unirse';
+  homeCodeInput.value = '';
+  hideError('home-error');
+}
+</script>
+</body>
+</html>
