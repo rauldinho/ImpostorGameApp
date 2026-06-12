@@ -136,21 +136,15 @@ function broadcast(room, event, data) {
   io.to(room.code).emit(event, data);
 }
 
-// ─── Word + hint selection ──────────────────────────────────────────────────
-// The impostor receives a DIFFERENT word from the same category as a hint —
-// similar enough to bluff, different enough to not know the actual word.
-function pickWordAndHint(category, customWords) {
+// ─── Word selection ─────────────────────────────────────────────────────────
+// The impostor only knows the category — they must deduce the word by listening.
+function pickWord(category, customWords) {
   if (category === 'custom') {
     const bank = customWords.filter(Boolean);
-    // Guaranteed ≥2 words (enforced at start-game)
-    const shuffled = [...bank].sort(() => Math.random() - 0.5);
-    return { word: shuffled[0], hint: shuffled[1] };
+    return bank[Math.floor(Math.random() * bank.length)];
   }
-  const bank    = wordBank[category] ?? wordBank.comida;
-  const wordIdx = Math.floor(Math.random() * bank.length);
-  let hintIdx;
-  do { hintIdx = Math.floor(Math.random() * bank.length); } while (hintIdx === wordIdx);
-  return { word: bank[wordIdx], hint: bank[hintIdx] };
+  const bank = wordBank[category] ?? wordBank.comida;
+  return bank[Math.floor(Math.random() * bank.length)];
 }
 
 // Normalize for final-guess comparison (case, whitespace, punctuation)
@@ -198,7 +192,6 @@ function revealResults(room) {
     const impostorName = room.players.get(eliminated)?.name ?? '?';
     io.to(eliminated).emit('final-guess', {
       category: room.settings.category,
-      hint:     room.hint,          // remind them of their hint
       impostorName,
     });
     for (const [pid] of room.players) {
@@ -319,16 +312,16 @@ io.on('connection', (socket) => {
     if (players.length < 3)
       return socket.emit('error', 'Need at least 3 players to start');
 
-    if (room.settings.category === 'custom' && room.settings.customWords.length < 2)
-      return socket.emit('error', 'Add at least 2 custom words for the impostor hint to work');
+    if (room.settings.category === 'custom' && room.settings.customWords.length < 1)
+      return socket.emit('error', 'Agrega al menos 1 palabra personalizada');
 
-    const { word, hint } = pickWordAndHint(room.settings.category, room.settings.customWords);
-    const count          = Math.min(room.settings.impostorCount, Math.floor(players.length / 2));
-    const shuffled       = [...players].sort(() => Math.random() - 0.5);
-    const impostorIds    = new Set(shuffled.slice(0, count).map(p => p.id));
+    const word         = pickWord(room.settings.category, room.settings.customWords);
+    const count        = Math.min(room.settings.impostorCount, Math.floor(players.length / 2));
+    const shuffled     = [...players].sort(() => Math.random() - 0.5);
+    const impostorIds  = new Set(shuffled.slice(0, count).map(p => p.id));
 
     room.word      = word;
-    room.hint      = hint;
+    room.hint      = null;
     room.impostors = impostorIds;
     room.phase     = 'playing';
     room.votes.clear();
@@ -338,7 +331,7 @@ io.on('connection', (socket) => {
       io.to(player.id).emit('game-started', {
         isImpostor,
         word:          isImpostor ? null : word,
-        hint:          isImpostor ? hint : null,
+        hint:          null,
         category:      room.settings.category,
         impostorCount: count,
         playerCount:   players.length,
@@ -346,7 +339,7 @@ io.on('connection', (socket) => {
     }
 
     broadcast(room, 'room-updated', roomSnapshot(room));
-    console.log(`[Room] ${room.code} started — word:"${word}" hint:"${hint}" impostors:${count}/${players.length}`);
+    console.log(`[Room] ${room.code} started — word:"${word}" impostors:${count}/${players.length}`);
   });
 
   // ── Host: everyone saw their word, start the round ───────────────────────

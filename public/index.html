@@ -745,13 +745,9 @@
     <div id="impostor-reveal" class="impostor-screen" style="display:none;">
       <span class="impostor-emoji">😈</span>
       <div class="impostor-title">Eres el Impostor</div>
-      <p class="impostor-tip">Escucha con atención e intenta pasar desapercibido.<br>¡Que no te atrapen!</p>
+      <p class="impostor-tip">Escucha a los demás con atención.<br>Deduce la palabra y ¡no te delates!</p>
       <p class="impostor-cat">Categoría: <strong id="reveal-category-impostor"></strong></p>
-      <div class="impostor-hint-box">
-        <div class="impostor-hint-label">Tu palabra pista</div>
-        <div class="impostor-hint-word" id="reveal-hint-word"></div>
-        <div class="impostor-hint-desc">De la misma categoría — úsala para disimular, pero NO es la palabra secreta</div>
-      </div>
+      <p class="impostor-tip" style="margin-top:0.75rem;font-size:0.78rem;opacity:0.75;">No sabes la palabra secreta — tendrás que adivinarla escuchando al grupo.</p>
     </div>
 
     <div class="spacer"></div>
@@ -847,9 +843,6 @@
         <p style="color:rgba(255,255,255,0.85);font-size:0.9rem;line-height:1.5;margin-bottom:0.25rem;font-weight:500;">
           Adivina la palabra secreta para ganar igual.<br>
           Categoría: <strong id="fg-category" style="color:var(--yellow);"></strong>
-        </p>
-        <p style="font-size:0.8rem;color:rgba(255,255,255,0.7);">
-          Tu pista era: <strong id="fg-hint" style="color:var(--yellow);"></strong>
         </p>
       </div>
       <div class="countdown-ring-wrap mt-3">
@@ -1051,13 +1044,12 @@ socket.on('vote-updated', ({ count, total }) => {
   document.getElementById('vote-total').textContent = total;
 });
 
-socket.on('final-guess', ({ category, hint }) => {
+socket.on('final-guess', ({ category }) => {
   showView('view-final-guess');
   document.getElementById('final-guess-room-code').textContent = myRoomCode ?? '';
   document.getElementById('final-guess-impostor-panel').style.display = '';
   document.getElementById('final-guess-waiting-panel').style.display  = 'none';
   document.getElementById('fg-category').textContent = formatCategory(category);
-  document.getElementById('fg-hint').textContent     = hint ?? '';
   document.getElementById('fg-input').value          = '';
   document.getElementById('btn-submit-guess').disabled    = false;
   document.getElementById('btn-submit-guess').textContent = 'Enviar Respuesta';
@@ -1309,7 +1301,6 @@ function renderWordReveal(data) {
     document.getElementById('normal-reveal').style.display   = 'none';
     document.getElementById('impostor-reveal').style.display = '';
     document.getElementById('reveal-category-impostor').textContent = formatCategory(data.category);
-    document.getElementById('reveal-hint-word').textContent         = data.hint ?? '?';
   } else {
     document.getElementById('normal-reveal').style.display   = '';
     document.getElementById('impostor-reveal').style.display = 'none';
@@ -1336,10 +1327,7 @@ function renderGame(players) {
       <span style="font-size:1.5rem;">😈</span>
       <p style="color:var(--red);font-weight:900;margin-top:0.3rem;text-transform:uppercase;letter-spacing:0.04em;">Eres el Impostor</p>
       <p style="color:var(--fg);font-size:0.78rem;margin-top:0.15rem;font-weight:700;opacity:0.6;text-transform:uppercase;letter-spacing:0.08em;">Categoría: ${formatCategory(personal.category)}</p>
-      <div style="margin-top:0.65rem;background:var(--red);border:3px solid var(--fg);padding:0.6rem 0.9rem;display:inline-block;box-shadow:3px 3px 0 0 var(--fg);">
-        <span style="font-size:0.58rem;font-weight:900;text-transform:uppercase;letter-spacing:0.14em;color:var(--yellow);">Tu palabra pista</span>
-        <div style="font-size:1.3rem;font-weight:900;color:var(--white);margin-top:0.1rem;text-transform:uppercase;">${escHtml(personal.hint ?? '?')}</div>
-      </div>`;
+      <p style="color:var(--fg);font-size:0.72rem;margin-top:0.4rem;font-weight:500;opacity:0.55;">Escucha al grupo e intenta adivinar la palabra.</p>`;
   } else {
     rem.innerHTML = `
       <p style="color:var(--fg);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.14em;font-weight:900;opacity:0.55;">Tu palabra</p>
