@@ -14,12 +14,96 @@ app.get('/health', (_req, res) =>
 
 // ─── Word bank ──────────────────────────────────────────────────────────────
 const wordBank = {
-  food:        ['pizza', 'sushi', 'hamburger', 'tacos', 'pasta', 'ice cream', 'ramen', 'pancakes', 'steak', 'lasagna', 'curry', 'sashimi', 'burrito', 'waffles', 'nachos'],
-  animals:     ['elephant', 'dolphin', 'penguin', 'giraffe', 'tiger', 'kangaroo', 'octopus', 'wolf', 'flamingo', 'shark', 'cheetah', 'koala', 'gorilla', 'peacock', 'platypus'],
-  movies:      ['Titanic', 'Inception', 'Avengers', 'Joker', 'Lion King', 'Frozen', 'Interstellar', 'Parasite', 'The Matrix', 'Shrek', 'Gladiator', 'Toy Story', 'Forrest Gump', 'Pulp Fiction', 'Up'],
-  sports:      ['soccer', 'basketball', 'tennis', 'swimming', 'boxing', 'golf', 'volleyball', 'cycling', 'surfing', 'wrestling', 'gymnastics', 'skiing', 'archery', 'fencing', 'rowing'],
-  places:      ['Paris', 'Tokyo', 'New York', 'Sydney', 'Cairo', 'Rome', 'Bangkok', 'London', 'Dubai', 'Barcelona', 'Rio de Janeiro', 'Amsterdam', 'Marrakech', 'Venice', 'Singapore'],
-  professions: ['doctor', 'teacher', 'chef', 'pilot', 'astronaut', 'firefighter', 'architect', 'detective', 'scientist', 'musician', 'lawyer', 'artist', 'surgeon', 'journalist', 'engineer'],
+  comida: [
+    'pizza', 'sushi', 'hamburguesa', 'tacos', 'pasta', 'helado', 'ramen', 'pancakes',
+    'bistec', 'lasaña', 'curry', 'sashimi', 'burrito', 'waffles', 'nachos', 'ceviche',
+    'empanadas', 'paella', 'hot dog', 'arroz', 'pollo frito', 'donas', 'churros',
+    'chocolate', 'queso', 'papas fritas', 'aguacate', 'tortilla', 'enchiladas', 'tamales',
+    'chilaquiles', 'pozole', 'flan', 'brownie', 'cheesecake', 'croissant', 'crepes',
+    'tiramisú', 'salmón', 'camarones', 'guacamole', 'sandwich', 'quesadilla', 'dim sum',
+    'pho', 'shawarma', 'kebab', 'pad thai', 'gelato', 'macarons',
+  ],
+  animales: [
+    'elefante', 'delfín', 'pingüino', 'jirafa', 'tigre', 'canguro', 'pulpo', 'lobo',
+    'flamenco', 'tiburón', 'guepardo', 'koala', 'gorila', 'pavorreal', 'ornitorrinco',
+    'oso polar', 'panda', 'rinoceronte', 'cocodrilo', 'hipopótamo', 'águila', 'serpiente',
+    'loro', 'gato', 'perro', 'caballo', 'vaca', 'cerdo', 'gallina', 'conejo', 'ardilla',
+    'zorro', 'oso', 'ballena', 'mariposa', 'abeja', 'araña', 'escorpión', 'camaleón',
+    'llama', 'alpaca', 'bisonte', 'cebra', 'leopardo', 'jaguar', 'puma', 'mono',
+    'tortuga', 'medusa', 'cangrejo',
+  ],
+  peliculas: [
+    'Titanic', 'Inception', 'Avengers', 'Joker', 'El Rey León', 'Frozen', 'Interestelar',
+    'Parasite', 'The Matrix', 'Shrek', 'Gladiador', 'Toy Story', 'Forrest Gump',
+    'Pulp Fiction', 'Up', 'Avatar', 'El Padrino', 'Star Wars', 'Jurassic Park',
+    'El Señor de los Anillos', 'Harry Potter', 'Spider-Man', 'Batman', 'Coco', 'Moana',
+    'Encanto', 'Ratatouille', 'WALL-E', 'Buscando a Nemo', 'Monsters Inc', 'Shutter Island',
+    'La La Land', 'Bohemian Rhapsody', 'Mad Max', 'Rápidos y Furiosos', 'John Wick',
+    'Top Gun', 'Karate Kid', 'Rocky', 'Terminator', 'Alien', 'Scarface', 'Titanic',
+    'Black Panther', 'Thor', 'Iron Man', 'Doctor Strange', 'Deadpool', 'Oppenheimer',
+    'Barbie', 'Dune',
+  ],
+  deportes: [
+    'fútbol', 'baloncesto', 'tenis', 'natación', 'boxeo', 'golf', 'voleibol', 'ciclismo',
+    'surf', 'lucha libre', 'gimnasia', 'esquí', 'tiro con arco', 'esgrima', 'remo',
+    'béisbol', 'rugby', 'atletismo', 'MMA', 'judo', 'karate', 'taekwondo', 'escalada',
+    'patinaje', 'Fórmula 1', 'motociclismo', 'triatlón', 'waterpolo', 'ping pong',
+    'bádminton', 'hockey', 'cricket', 'snowboard', 'halterofilia', 'maratón',
+    'parkour', 'skateboarding', 'breakdance', 'esports', 'pádel', 'fútbol americano',
+    'handball', 'polo', 'equitación', 'paracaidismo', 'windsurf', 'kayak',
+  ],
+  lugares: [
+    'París', 'Tokio', 'Nueva York', 'Sídney', 'El Cairo', 'Roma', 'Bangkok', 'Londres',
+    'Dubái', 'Barcelona', 'Río de Janeiro', 'Ámsterdam', 'Marrakech', 'Venecia',
+    'Singapur', 'Los Ángeles', 'Ciudad de México', 'Buenos Aires', 'Moscú', 'Pekín',
+    'Mumbai', 'Toronto', 'Chicago', 'Miami', 'Las Vegas', 'Berlín', 'Madrid', 'Lisboa',
+    'Estambul', 'Seúl', 'Hong Kong', 'Santorini', 'Bali', 'Machu Picchu', 'Petra',
+    'Times Square', 'La Torre Eiffel', 'El Coliseo', 'La Sagrada Familia', 'El Taj Mahal',
+    'La Gran Muralla', 'Disney World', 'Cancún', 'Cartagena', 'Medellín', 'La Habana',
+    'Praga', 'Dubrovnik', 'Reikiavik', 'Nairobi',
+  ],
+  profesiones: [
+    'médico', 'maestro', 'chef', 'piloto', 'astronauta', 'bombero', 'arquitecto',
+    'detective', 'científico', 'músico', 'abogado', 'artista', 'cirujano', 'periodista',
+    'ingeniero', 'psicólogo', 'veterinario', 'dentista', 'farmacéutico', 'policía',
+    'actor', 'cantante', 'diseñador', 'programador', 'fotógrafo', 'escritor', 'político',
+    'futbolista', 'entrenador', 'carpintero', 'electricista', 'plomero', 'mecánico',
+    'enfermero', 'paramédico', 'juez', 'contador', 'biólogo', 'físico', 'químico',
+    'historiador', 'arqueólogo', 'sociólogo', 'filósofo', 'mago', 'YouTuber', 'streamer',
+    'influencer', 'tatuador', 'sommelier',
+  ],
+  superheroes: [
+    'Spider-Man', 'Batman', 'Superman', 'Iron Man', 'Thor', 'Capitán América', 'Hulk',
+    'Wonder Woman', 'Black Panther', 'Flash', 'Aquaman', 'Doctor Strange', 'Wolverine',
+    'Deadpool', 'Magneto', 'Joker', 'Harley Quinn', 'Catwoman', 'Hawkeye', 'Viuda Negra',
+    'Cíclope', 'Tormenta', 'Mystique', 'Lex Luthor', 'Thanos', 'Loki', 'Venom',
+    'Ant-Man', 'Rocket Raccoon', 'Groot', 'Gamora', 'Star-Lord', 'Capitana Marvel',
+    'Shazam', 'Linterna Verde', 'Nightwing', 'Robin', 'Batgirl', 'Daredevil', 'Punisher',
+    'Silver Surfer', 'Mr. Fantastic', 'Hombre Invisible', 'La Cosa', 'Antorcha Humana',
+    'Vision', 'Scarlet Witch', 'Doctor Doom', 'Galactus',
+  ],
+  videojuegos: [
+    'Minecraft', 'Fortnite', 'League of Legends', 'Call of Duty', 'FIFA', 'GTA',
+    'Mario Bros', 'Zelda', 'Pokémon', 'Sonic', 'Pac-Man', 'Tetris', 'Counter-Strike',
+    'Valorant', 'Apex Legends', 'Among Us', 'Roblox', 'Los Sims', 'Red Dead Redemption',
+    'God of War', 'The Last of Us', 'Halo', 'Doom', 'Resident Evil', 'Mortal Kombat',
+    'Street Fighter', 'Final Fantasy', 'Dark Souls', 'Elden Ring', 'Cyberpunk 2077',
+    'The Witcher', 'Overwatch', 'World of Warcraft', 'Diablo', 'Starcraft',
+    'Age of Empires', 'Clash of Clans', 'Candy Crush', 'Angry Birds', 'Subway Surfers',
+    'Hollow Knight', 'Celeste', 'Fall Guys', 'Stumble Guys', 'Rocket League',
+    'Clash Royale', 'Brawl Stars', 'Free Fire', 'PUBG', 'Warzone',
+  ],
+  series: [
+    'Breaking Bad', 'Game of Thrones', 'Stranger Things', 'The Office', 'Friends',
+    'La Casa de Papel', 'Narcos', 'Peaky Blinders', 'Black Mirror', 'The Witcher',
+    'Squid Game', 'Dark', 'Ozark', 'Better Call Saul', 'The Crown', 'Succession',
+    'The Mandalorian', 'The Boys', 'Loki', 'Euphoria', 'Ted Lasso', 'Modern Family',
+    'Grey\'s Anatomy', 'Sherlock', 'Chernobyl', 'Mindhunter', 'Lupin', 'Emily in Paris',
+    'Élite', 'Cobra Kai', 'Dexter', 'Los Sopranos', 'The Wire', 'Lost', 'Prison Break',
+    'Heroes', 'Supernatural', 'The Walking Dead', 'Bridgerton', 'The Last of Us',
+    'Andor', 'House of the Dragon', 'Wednesday', 'Arcane', 'Avatar: La Leyenda de Aang',
+    'Simpsons', 'South Park', 'Rick y Morty', 'Futurama',
+  ],
 };
 
 // ─── In-memory state ────────────────────────────────────────────────────────
@@ -62,7 +146,7 @@ function pickWordAndHint(category, customWords) {
     const shuffled = [...bank].sort(() => Math.random() - 0.5);
     return { word: shuffled[0], hint: shuffled[1] };
   }
-  const bank    = wordBank[category] ?? wordBank.food;
+  const bank    = wordBank[category] ?? wordBank.comida;
   const wordIdx = Math.floor(Math.random() * bank.length);
   let hintIdx;
   do { hintIdx = Math.floor(Math.random() * bank.length); } while (hintIdx === wordIdx);
@@ -171,7 +255,7 @@ io.on('connection', (socket) => {
       code,
       owner:            socket.id,
       players:          new Map([[socket.id, { id: socket.id, name: trimmed }]]),
-      settings:         { category: 'food', impostorCount: 1, customWords: [] },
+      settings:         { category: 'comida', impostorCount: 1, customWords: [] },
       phase:            'lobby',
       word:             null,
       hint:             null,
