@@ -30,14 +30,14 @@
       --shadow: #1A1714;
     }
     [data-theme="dark"] {
-      --bg:     #111318;
-      --fg:     #E8EAF2;
-      --red:    #FF3347;
-      --blue:   #3D8BFF;
-      --yellow: #FFD000;
-      --muted:  #1F2230;
-      --white:  #1A1D28;
-      --shadow: #FF3347;
+      --bg:     #0D1017;
+      --fg:     #DCE4FA;
+      --red:    #FF2D55;
+      --blue:   #0A84FF;
+      --yellow: #FFD60A;
+      --muted:  #1E2639;
+      --white:  #151B27;
+      --shadow: #FF2D55;
     }
     /* Dark mode theme toggle button */
     #btn-theme {
@@ -132,7 +132,34 @@
       justify-content: center;
       margin-bottom: 0.9rem;
       flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-decoration: none;
     }
+    .spy-logo:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0px 0px var(--red); }
+    .spy-logo:active { transform: translate(3px,3px); box-shadow: 2px 2px 0px 0px var(--red); }
+    [data-theme="dark"] .spy-logo {
+      background: var(--white);
+      border-color: var(--fg);
+    }
+    [data-theme="dark"] .topbar-logo {
+      background: var(--white);
+      border-color: var(--fg);
+    }
+    /* Topbar mini-logo */
+    .topbar-logo {
+      width: 28px; height: 28px;
+      background: var(--fg);
+      border: 2px solid var(--fg);
+      box-shadow: 3px 3px 0px 0px var(--red);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .topbar-logo:hover  { transform: translate(-1px,-1px); box-shadow: 4px 4px 0px 0px var(--red); }
+    .topbar-logo:active { transform: translate(2px,2px); box-shadow: none; }
     .home-color-bar {
       display: flex;
       height: 8px;
@@ -196,7 +223,7 @@
 
     .btn-yellow {
       background: var(--yellow);
-      color: var(--fg);
+      color: #1A1714;
       box-shadow: 5px 5px 0px 0px var(--shadow);
     }
     .btn-yellow:hover:not(:disabled) { background: #D8AC10; }
@@ -299,13 +326,13 @@
       align-items: center;
       gap: 0.75rem;
       background: var(--yellow);
-      border: 3px solid var(--fg);
+      border: 3px solid #1A1714;
       padding: 0.9rem 1.1rem;
-      box-shadow: 6px 6px 0px 0px var(--shadow);
+      box-shadow: 6px 6px 0px 0px #1A1714;
     }
     .room-code-label {
       font-size: 0.6rem;
-      color: var(--fg);
+      color: #1A1714;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.15em;
@@ -314,13 +341,13 @@
       font-size: 2rem;
       font-weight: 900;
       letter-spacing: 0.2em;
-      color: var(--fg);
+      color: #1A1714;
       font-variant-numeric: tabular-nums;
       flex: 1;
     }
     .copy-btn {
-      background: var(--fg);
-      border: 2px solid var(--fg);
+      background: #1A1714;
+      border: 2px solid #1A1714;
       color: var(--yellow);
       font-family: 'Outfit', system-ui, sans-serif;
       font-size: 0.72rem;
@@ -334,9 +361,9 @@
       border-radius: 0;
       box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.4);
     }
-    .copy-btn:hover { background: #333; }
+    .copy-btn:hover { background: #333; border-color: #333; }
     .copy-btn:active { transform: translate(2px,2px); box-shadow: none; }
-    .copy-btn.copied { background: var(--fg); color: var(--yellow); }
+    .copy-btn.copied { background: #1A1714; color: var(--yellow); }
 
     /* ── Player list ── */
     .player-list { display: flex; flex-direction: column; gap: 0.45rem; }
@@ -365,7 +392,7 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
-    .badge-host     { background: var(--yellow); color: var(--fg); }
+    .badge-host     { background: var(--yellow); color: #1A1714; }
     .badge-you      { background: var(--blue);   color: var(--white); }
     .badge-impostor { background: var(--red);    color: var(--white); }
 
@@ -387,9 +414,10 @@
       border-radius: 0;
       box-shadow: 2px 2px 0px 0px var(--shadow);
     }
-    .chip:hover:not(.disabled)  { background: var(--muted); }
+    .chip:hover:not(.disabled):not(.active)  { background: var(--muted); }
     .chip:active:not(.disabled) { transform: translate(2px,2px); box-shadow: none; }
-    .chip.active  { background: var(--blue); color: var(--white); box-shadow: 3px 3px 0px 0px var(--shadow); }
+    .chip.active  { background: var(--blue); color: #fff; box-shadow: 3px 3px 0px 0px var(--shadow); }
+    .chip.active:hover { background: var(--blue); }
     .chip.disabled { cursor: default; opacity: 0.4; pointer-events: none; }
 
     /* ── Impostor count ── */
@@ -625,7 +653,7 @@
     <!-- Header centrado -->
     <div class="home-header">
       <!-- Logo espía -->
-      <div class="spy-logo">
+      <div class="spy-logo" id="home-logo">
         <i class="fa-solid fa-user-secret" style="font-size:2.2rem;color:var(--yellow);"></i>
       </div>
       <!-- Barra de colores + título (mismo ancho) -->
@@ -679,7 +707,10 @@
   ═══════════════════════════════════════ -->
   <div id="view-lobby" class="view fade-in">
     <div class="topbar">
-      <h2>Sala de Espera</h2>
+      <div style="display:flex;align-items:center;gap:0.55rem;">
+        <div class="topbar-logo nav-home"><i class="fa-solid fa-user-secret" style="font-size:0.9rem;color:var(--yellow);"></i></div>
+        <h2>Sala de Espera</h2>
+      </div>
       <button id="btn-leave-lobby" class="btn btn-ghost btn-sm">Salir</button>
     </div>
 
@@ -749,7 +780,10 @@
   ═══════════════════════════════════════ -->
   <div id="view-word-reveal" class="view fade-in">
     <div class="topbar">
-      <h2>Tu Rol</h2>
+      <div style="display:flex;align-items:center;gap:0.55rem;">
+        <div class="topbar-logo nav-home"><i class="fa-solid fa-user-secret" style="font-size:0.9rem;color:var(--yellow);"></i></div>
+        <h2>Tu Rol</h2>
+      </div>
       <span id="reveal-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
     </div>
 
@@ -797,7 +831,10 @@
   ═══════════════════════════════════════ -->
   <div id="view-game" class="view fade-in">
     <div class="topbar">
-      <h2>Discusión</h2>
+      <div style="display:flex;align-items:center;gap:0.55rem;">
+        <div class="topbar-logo nav-home"><i class="fa-solid fa-user-secret" style="font-size:0.9rem;color:var(--yellow);"></i></div>
+        <h2>Discusión</h2>
+      </div>
       <span id="game-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
     </div>
 
@@ -828,7 +865,10 @@
   ═══════════════════════════════════════ -->
   <div id="view-voting" class="view fade-in">
     <div class="topbar">
-      <h2>Votación</h2>
+      <div style="display:flex;align-items:center;gap:0.55rem;">
+        <div class="topbar-logo nav-home"><i class="fa-solid fa-user-secret" style="font-size:0.9rem;color:var(--yellow);"></i></div>
+        <h2>Votación</h2>
+      </div>
       <span id="voting-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
     </div>
 
@@ -862,7 +902,10 @@
   ═══════════════════════════════════════ -->
   <div id="view-final-guess" class="view fade-in">
     <div class="topbar">
-      <h2>Última Oportunidad</h2>
+      <div style="display:flex;align-items:center;gap:0.55rem;">
+        <div class="topbar-logo nav-home"><i class="fa-solid fa-user-secret" style="font-size:0.9rem;color:var(--yellow);"></i></div>
+        <h2>Última Oportunidad</h2>
+      </div>
       <span id="final-guess-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
     </div>
 
@@ -922,7 +965,10 @@
   ═══════════════════════════════════════ -->
   <div id="view-results" class="view fade-in">
     <div class="topbar">
-      <h2>Resultados</h2>
+      <div style="display:flex;align-items:center;gap:0.55rem;">
+        <div class="topbar-logo nav-home"><i class="fa-solid fa-user-secret" style="font-size:0.9rem;color:var(--yellow);"></i></div>
+        <h2>Resultados</h2>
+      </div>
       <span id="results-room-code" style="font-size:0.72rem;font-weight:900;letter-spacing:0.12em;opacity:0.6;"></span>
     </div>
 
@@ -996,8 +1042,8 @@ let hasVoted   = false;
 let countdownInterval = null;
 
 // ── Avatars ───────────────────────────────────────────────────────────────────
-const COLOURS     = ['#D02020','#1040C0','#121212','#D02020','#1040C0','#121212','#D02020','#1040C0','#121212','#D02020'];
-const avatarColor = id => COLOURS[(id.charCodeAt(0) + id.charCodeAt(id.length-1)) % COLOURS.length];
+const AVATAR_PALETTE = ['var(--blue)','var(--red)','var(--blue)','var(--red)','var(--blue)','var(--red)','var(--blue)','var(--red)','var(--blue)','var(--red)'];
+const avatarColor = id => AVATAR_PALETTE[(id.charCodeAt(0) + id.charCodeAt(id.length-1)) % AVATAR_PALETTE.length];
 const initials    = name => name.slice(0,2).toUpperCase();
 
 // ── View management ───────────────────────────────────────────────────────────
@@ -1114,6 +1160,22 @@ socket.on('you-are-host', () => {
 
 socket.on('error', (msg) => showError('lobby-error', msg));
 
+// ── Persist name ─────────────────────────────────────────────────────────────
+(function loadSavedName() {
+  const saved = localStorage.getItem('impostor-name');
+  if (saved) document.getElementById('home-name').value = saved;
+})();
+
+// ── Logo / nav-home clicks → go to home screen ────────────────────────────────
+document.querySelectorAll('.nav-home, #home-logo').forEach(el => {
+  el.addEventListener('click', () => {
+    resetState();
+    showView('view-home');
+    socket.disconnect();
+    socket.connect();
+  });
+});
+
 // ── HOME ──────────────────────────────────────────────────────────────────────
 const homeNameInput  = document.getElementById('home-name');
 const homeCodeInput  = document.getElementById('home-code');
@@ -1142,7 +1204,7 @@ btnCreate.addEventListener('click', () => {
     btnCreate.disabled    = false;
     btnCreate.textContent = 'Crear partida';
     if (res.ok) {
-      myName = name; myRoomCode = res.code; amHost = true;
+      myName = name; myRoomCode = res.code; amHost = true; localStorage.setItem('impostor-name', name);
       showView('view-lobby');
     } else { showError('home-error', res.error); }
   });
@@ -1163,7 +1225,7 @@ function doJoin() {
     btnJoinConfirm.disabled    = false;
     btnJoinConfirm.textContent = 'Entrar →';
     if (res.ok) {
-      myName = name; myRoomCode = code; amHost = false;
+      myName = name; myRoomCode = code; amHost = false; localStorage.setItem('impostor-name', name);
       showView('view-lobby');
     } else { showError('home-error', res.error); }
   });
