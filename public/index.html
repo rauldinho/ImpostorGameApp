@@ -740,11 +740,14 @@
           <div class="chip" data-cat="animales">Animales</div>
           <div class="chip" data-cat="peliculas">Películas</div>
           <div class="chip" data-cat="deportes">Deportes</div>
-          <div class="chip" data-cat="lugares">Lugares</div>
           <div class="chip" data-cat="profesiones">Profesiones</div>
-          <div class="chip" data-cat="superheroes">Superhéroes</div>
+          <div class="chip" data-cat="personajes">Personajes</div>
           <div class="chip" data-cat="videojuegos">Videojuegos</div>
-          <div class="chip" data-cat="series">Series</div>
+          <div class="chip" data-cat="tecnologia">Tecnología</div>
+          <div class="chip" data-cat="vehiculos">Vehículos</div>
+          <div class="chip" data-cat="objetos">Objetos</div>
+          <div class="chip" data-cat="marcas">Marcas</div>
+          <div class="chip" data-cat="paises_ciudades">Países y Ciudades</div>
           <div class="chip" data-cat="custom">Personalizado</div>
         </div>
       </div>
@@ -1621,8 +1624,9 @@ function formatCategory(cat) {
   if (!cat) return '';
   const map = {
     comida:'Comida', animales:'Animales', peliculas:'Películas',
-    deportes:'Deportes', lugares:'Lugares', profesiones:'Profesiones',
-    superheroes:'Superhéroes', videojuegos:'Videojuegos', series:'Series',
+    deportes:'Deportes', profesiones:'Profesiones', personajes:'Personajes',
+    videojuegos:'Videojuegos', tecnologia:'Tecnología', vehiculos:'Vehículos',
+    objetos:'Objetos', marcas:'Marcas', paises_ciudades:'Países y Ciudades',
     custom:'Personalizado',
   };
   return map[cat] ?? cat;
