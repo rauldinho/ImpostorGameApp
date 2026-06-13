@@ -200,6 +200,12 @@ function pickWord(category, customWords) {
     const bank = customWords.filter(Boolean);
     return bank[Math.floor(Math.random() * bank.length)];
   }
+  if (category === 'aleatorio') {
+    const keys = Object.keys(wordBank);
+    const randomCat = keys[Math.floor(Math.random() * keys.length)];
+    const bank = wordBank[randomCat];
+    return bank[Math.floor(Math.random() * bank.length)];
+  }
   const bank = wordBank[category] ?? wordBank.comida;
   return bank[Math.floor(Math.random() * bank.length)];
 }
